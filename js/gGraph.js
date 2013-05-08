@@ -1,8 +1,8 @@
 var gGraph = (function(){
-		var trans = 0.4;
-		var width = 700;
-		var height = 400;
+	
 
+		var settings;
+		var measurements = {};
 
 		var defaults = {
 			xMin: 0,
@@ -17,38 +17,62 @@ var gGraph = (function(){
 			yUpperScale: 5, // Implementeret
 			lineColor: "#000", //Implementeret
 			lineWidth: 2, //Implemnteret
-			textColor: "#000" //Implementeret
+			textColor: "#000", //Implementeret
+			width: 700,
+			height: 410,
 		}
 
 
+
+
 	return {
-		drawGraph: function(options){
-
+		init: function(options){
 			settings = jQuery.extend({}, defaults, options);
-		
 
-			drawXAxis(settings);
-			drawYAxis(settings);
+			measurements.xPoints = settings.xMax-settings.xMin;
+			measurements.xDist = settings.width/measurements.xPoints;
+
+			measurements.yPoints = settings.yMax - settings.yMin;
+			measurements.yDist = settings.height/measurements.yPoints;
+
+		},
+		drawGraph: function(options){
+			drawXAxis();
+			drawYAxis();
 			stage.add(layer);
 		}, 
+		getSettings: function(){
+			return settings;
+		},
 		round: function(number, decimals){
 			var factor = Math.pow(10, decimals);
 			return Math.round(number*factor)/factor;
 		},
+		getDistances: function(){
+			return {x: measurements.xDist, y: measurements.yDist}
+		},
 		convertCoords: function(coords){
 		
-			var y = 410-10*(coords.y-10);
-			var x = 50+10*(coords.x-50);
+			var y = this.convertYCoord(coords.y);
+			var x = this.convertXCoord(coords.x);
 			
 			return {x:x, y:y};
+		},
+		convertXCoord: function(xCoord){
+			return 50+measurements.xDist*(xCoord-settings.xMin);
+		},
+		convertYCoord: function(yCoord){
+			return (settings.height+20)-measurements.yDist*(yCoord-settings.yMin);
 		}
+
 
 	};
 
 	function drawXAxis(){
 		
+		
 		var xAxis = new Kinetic.Line({  
-	        points: [40, 410, 760, 410],
+	        points: [40, settings.height+20, 760, settings.height+20],
 	        stroke: settings.lineColor,
 	        strokeWidth: settings.lineWidth,
 	        lineCap: 'round'
@@ -57,14 +81,16 @@ var gGraph = (function(){
 
 		layer.add(xAxis);
 
-      	for(var i = 1; i<=70; i++){
-      		xPoint = 50+10*i;
+      	for(var i = 1; i<=measurements.xPoints; i++){
+
+      		xPos = 50+settings.xMin+measurements.xDist*i;
+      		
 			if(i%settings.xUpperScale == 0){
       			stroke = 2;
 				var xScale = new Kinetic.Text({
-	      			x: xPoint-5,
-	      			y: 420,
-	      			text: settings.xScale*i+settings.xStart,
+	      			x: xPos-5,
+	      			y: settings.height+30,
+	      			text: i,
 	      			fontFamily: 'Georgia',
 	      			fontSize: 12,
 	      			fill: settings.textColor
@@ -79,24 +105,24 @@ var gGraph = (function(){
       		
       		
       		var xDash = new Kinetic.Line({
-      			points: [xPoint, 405, xPoint, 415],
+      			points: [xPos, settings.height+15, xPos, settings.height+25],
 		        stroke: settings.lineColor,
 		        strokeWidth: stroke,
 		        lineCap: 'round'
 
       		})
       		layer.add(xDash);
-      		if(i%5 == 0){
-
-	      		
-	      	}
+      	
       	}
 
 	}
 
 	function drawYAxis(){
+
+		
+
 		var yAxis = new Kinetic.Line({
-	        points: [50, 420, 50, 10],
+	        points: [50, settings.height+30, 50, 10],
 	        stroke: settings.lineColor,
 	        strokeWidth: settings.lineWidth,
 	        lineCap: 'round'
@@ -106,14 +132,15 @@ var gGraph = (function(){
 
 
       	//
-      	for(var i=1; i<40; i++){
-      		yPoint = 00+(410-10*i);
+      	for(var i=1; i<=measurements.yPoints; i++){
+      		
+      		yPos = settings.height+20-(settings.yMin+measurements.yDist*i);
       		if(i%settings.yUpperScale == 0){
       			stroke = 2;
 				var yScale = new Kinetic.Text({
 	      			x: 25,
-	      			y: yPoint-6,
-	      			text: settings.yScale*i+settings.yStart,
+	      			y: yPos-6,
+	      			text: i,
 	      			fontFamily: 'Georgia',
 	      			fontSize: 12,
 	      			fill: settings.textColor
@@ -129,7 +156,7 @@ var gGraph = (function(){
       		
       		//Lines on the y-axis
       		var yDash = new Kinetic.Line({
-      			points: [45, yPoint, 55, yPoint],
+      			points: [45, yPos, 55, yPos],
 		        stroke: settings.lineColor,
 		        strokeWidth: stroke,
 		        lineCap: 'round'

@@ -33,26 +33,23 @@
 
 				</form>
 				<div id="resultDiv" style="display:none;">
-				<h3>Result:</h3>
+					<h3>Result:</h3>
 
-				<p>
-					Your BMI is <span class="resultField" id="bmiField"></span><br />
-					This puts you in the category <br />"<span class="resultField" id="catField"></span>""
-				</p>
+					<p>
+						Your BMI is <span class="resultField" id="bmiField"></span><br />
+						This puts you in the category <br />"<span class="resultField" id="catField"></span>""
+					</p>
 
-				<p>
-					Your ideal upper weight: <span class="resultField" id="upperWeight"></span><br />
-					Your ideal lower weight: <span class="resultField" id="lowerWeight"></span>
+					<p>
+						Your ideal upper weight: <span class="resultField" id="upperWeight"></span><br />
+						Your ideal lower weight: <span class="resultField" id="lowerWeight"></span>
 
-				</p>
-			</div>
-
-
-
+					</p>
+				</div>
 			</div>
 			<div class="offset1 span7">
 				<h3>Your Ideal Weight:</h3>
-				<div id="graphContainer" style="border: 1px solid #aaa;height:500px;width:800px;padding-top:00px;"></div>
+				<div id="graphContainer" style="border: 1px solid #aaa;height:500px;width:800px;"></div>
   
 			</div>
 		</div>
@@ -74,25 +71,30 @@
 		var stage = new Kinetic.Stage({
 	        container: 'graphContainer',
 	        width: 790,
-	        height: 440
+	        height: 500
 	      });
 
       var layer = new Kinetic.Layer();
       
       	//Tegn grafen
-		gGraph.drawGraph({
-			xMax: 23, 
-			yMax:90,
 
-
+      	gGraph.init({
+			xMax: 110, 
+			yMax:50,
 		});
+
+      	BMIGraph.init();
+
+		gGraph.drawGraph();
 		BMIGraph.plotIntervals();
 
 
 		$('document').ready(function(){
 			
 			$('#calc_BMI').on('submit', function(e){
+
 				e.preventDefault();
+				
 				height = $('#height').val()/100;
 				weight = $('#weight').val();
 				weight = weight.replace(",",".");
@@ -119,8 +121,8 @@
 
 				
 				
-				var idealUpperWeight = gGraph.round(25*Math.pow(height, 2),2);
-				var idealLowerWeight = gGraph.round(18.5*Math.pow(height,2),2);
+				var idealUpperWeight = gGraph.round(25*Math.pow(height, 2),1);
+				var idealLowerWeight = gGraph.round(18.5*Math.pow(height,2),1);
 
 				
 				
