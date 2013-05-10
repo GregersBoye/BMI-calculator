@@ -12,7 +12,7 @@
 	<body>
 		<div class="row">
 			<div class="span3 offset1">
-				<h2>BMI-Calculator</h2>
+				<h2>BMI-Calculator</h2>About us
 			</div>
 		</div>
 		<div class="row">
@@ -28,6 +28,7 @@
 						<input type="text" id="weight" placeholder="Kilograms"/>
 						<br />
 						<input type="submit" class="btn btn-primary" value="Calculate" />
+						<input type="submit" class="btn btn-primary" value="Plot history" />
 
 					</fieldset>
 
@@ -54,7 +55,11 @@
 			</div>
 		</div>
 		
-	</body>
+
+
+
+
+	
 	<script src="http://code.jquery.com/jquery.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.4.3.min.js"></script>
@@ -71,26 +76,29 @@
 		var stage = new Kinetic.Stage({
 	        container: 'graphContainer',
 	        width: 790,
-	        height: 500
+	        height: 500,
+
 	      });
 
-      var layer = new Kinetic.Layer();
+      
       
       	//Tegn grafen
 
       	gGraph.init({
 			xMax: 110, 
 			yMax:50,
+			yLabel: "BMI",
+	        xLabel: "Weight"
 		});
 
       	BMIGraph.init();
 
 		gGraph.drawGraph();
-		BMIGraph.plotIntervals();
+		//BMIGraph.plotIntervals();
 
 
 		$('document').ready(function(){
-			
+			gGraph.plotColumns([{x:5, y:10}, {x:39, y: 24}, {x: 60, y: 38}])
 			$('#calc_BMI').on('submit', function(e){
 
 				e.preventDefault();
@@ -101,7 +109,7 @@
 				BMI = (weight/Math.pow(height,2));
 				
 				BMI = gGraph.round(BMI, 2);
-					
+				
 				if(BMI<15)
 					cat = "Very severely underweight";
 				if(BMI>=15 && BMI <16)
@@ -133,22 +141,9 @@
 				$('#lowerWeight').text(idealLowerWeight);
 				$('#upperWeight').text(idealUpperWeight);
 				$('#resultDiv').fadeIn();
-				var BMICoords = gGraph.convertCoords({x:weight, y:gGraph.round(BMI, 1)})
+				var BMICoords ={x:weight, y:BMI}
 
-				var thisBMI = new Kinetic.Circle({
-
-					x:BMICoords.x,
-					y:BMICoords.y,
-					radius:5,
-					stroke: '#000',
-					strokeWidth: '2'
-
-
-				})
-				layer.add(thisBMI);
-				stage.add(layer);
-
-
+				gGraph.plotPoint(BMICoords);
 
 				BMIGraph.plotBMI(height);
 
@@ -163,6 +158,6 @@
 
 
 	</script>
-
+</body>
 </html>
 

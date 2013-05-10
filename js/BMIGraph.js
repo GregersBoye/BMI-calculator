@@ -1,7 +1,7 @@
 
 
 		var BMIGraph = (function(){
-
+			var BmiData;
 			var trans = 0.4;
 
 			var graphSettings;
@@ -9,26 +9,37 @@
 
 			return {
 				init: function(){
+					BmiData = new Kinetic.Layer;
 					graphSettings = gGraph.getSettings();
-
-					
 				},
 				plotBMI: function(userHeight){
-				
+
+					var topWeight = Math.pow(userHeight,2)*40;
+					var topBMI = 40;
+
+					var bottomWeight = Math.pow(userHeight,2)*15;
+					var bottomBMI = 15;
 					
-					var topBMI = gGraph.round(Math.pow(userHeight,2)*40, 0);
-					var bottomWeight = gGraph.round(Math.pow(userHeight,2)*15, 0);
-		
-					var startCoord = gGraph.convertCoords({x:bottomWeight, y:15});
-					var endCoords = gGraph.convertCoords({x: topBMI, y: 40 });
+					if(topWeight > graphSettings.xMax){
+						topWeight = graphSettings.xMax;
+						topBMI = topWeight/Math.pow(userHeight,2);
+					}
+
+					if(bottomWeight < graphSettings.xMin){
+						bottomWeight = graphSettings.xMin;
+						bottomBMI = bottomWeight/Math.pow(userHeight, 2);
+					}
+
+					var startCoord = gGraph.convertCoords({x:bottomWeight, y:bottomBMI});
+					var endCoords = gGraph.convertCoords({x: topWeight, y: topBMI });
 
 					var BMILine = new Kinetic.Line({
 						points: [startCoord.x, startCoord.y, endCoords.x, endCoords.y],
 						stroke: '#000',
 						strokeWidth: 2,
 					})
-					layer.add(BMILine);
-					stage.add(layer);
+					BmiData.add(BMILine);
+					stage.add(BmiData);
 
 				},
 
@@ -43,7 +54,7 @@
 				        fill: 'darkred',
 				        opacity: trans
 				    });
-					layer.add(veryObese);
+					BmiData.add(veryObese);
 
 					var obese = new Kinetic.Rect({
 			        	x: gGraph.convertXCoord(0),
@@ -53,7 +64,7 @@
 				        fill: 'red',
 				        opacity: trans		        
 				    });
-					layer.add(obese);
+					BmiData.add(obese);
 
 					var overweight = new Kinetic.Rect({
 			        	x: gGraph.convertXCoord(0),
@@ -65,7 +76,7 @@
 				        
 				        
 				    });
-					layer.add(overweight);
+					BmiData.add(overweight);
 
 					var normal = new Kinetic.Rect({
 			        	x: gGraph.convertXCoord(0),
@@ -77,7 +88,7 @@
 				        
 				        
 				    });
-					layer.add(normal);
+					BmiData.add(normal);
 
 					var underweight = new Kinetic.Rect({
 			        	x: gGraph.convertXCoord(0),
@@ -87,7 +98,7 @@
 				        fill: 'orange',
 				        opacity: trans
 				    });
-					layer.add(underweight);
+					BmiData.add(underweight);
 
 					var veryUnderweight = new Kinetic.Rect({
 			        	x: gGraph.convertXCoord(0),
@@ -97,8 +108,8 @@
 				        fill: 'red',
 				        opacity: trans
 				    });
-					layer.add(veryUnderweight);
-					stage.add(layer);
+					BmiData.add(veryUnderweight);
+					stage.add(BmiData);
 
 				}
 			}
